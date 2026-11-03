@@ -1,0 +1,56 @@
+<h2>Servicios disponibles (Express)</h2>
+
+{{#if services}}
+  <div class="services">
+    {{#each services}}
+      <article class="service-card">
+        <h3>{{name}}</h3>
+        <p>{{description}}</p>
+        <p>Precio: ${{price}}</p>
+        <p>Duracion: {{duration}}</p>
+        {{#if available}}
+          <p>Disponible</p>
+        {{else}}
+          <p>No disponible</p>
+        {{/if}}
+      </article>
+    {{/each}}
+  </div>
+{{else}}
+  <p>No hay servicios disponibles.</p>
+{{/if}}
+
+<hr style="margin: 40px 0;">
+
+<h2>En vivo (Socket.IO)</h2>
+
+<div id="services-live" style="border: 2px dashed #7c3aed; padding: 20px; border-radius: 14px; background: #faf5ff;">
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  socket.on("services_updated", (services) => {
+    const contenedor = document.getElementById("services-live");
+
+    if (!services || services.length === 0) {
+      contenedor.innerHTML = "<p>No hay servicios.</p>";
+      return;
+    }
+
+    let html = '<div class="services">';
+    services.forEach((s) => {
+      html += '<article class="service-card">';
+      html += `<h3>${s.name}</h3>`;
+      html += `<p>${s.description}</p>`;
+      html += `<p>Precio: $${s.price}</p>`;
+      html += `<p>Duracion: ${s.duration}</p>`;
+      html += s.available ? "<p>Disponible</p>" : "<p>No disponible</p>";
+      html += "</article>";
+    });
+    html += "</div>";
+
+    contenedor.innerHTML = html;
+  });
+</script>
